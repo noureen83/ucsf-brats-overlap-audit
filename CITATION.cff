@@ -1,7 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this code or the derived metadata, please cite it as below."
 title: "UCSF-PDGM / BraTS 2021 patient-overlap audit"
-version: 1.0.0
+version: 1.0.1
+doi: 10.5281/zenodo.23361084
 date-released: 2026-10-14
 license: MIT
 authors:

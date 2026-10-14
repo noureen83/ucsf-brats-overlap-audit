@@ -1,5 +1,7 @@
 # UCSF-PDGM / BraTS 2021 patient-overlap audit
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23361084.svg)](https://doi.org/10.5281/zenodo.23361084)
+
 Code and derived metadata for the paper **"Hidden Patient Overlap Between Public Glioma MRI Cohorts: An Identifier-Level Audit of UCSF-PDGM and BraTS and Its Consequences for External Validation"** (N. Hameed, T. F. Khan, M. Hussain, S. Saeed, A. Rauf; IEEE conference submission, 2026).
 
 The audit links the 501 scans (495 patients) of UCSF-PDGM v5 to BraTS 2021 using the identifiers published in the UCSF-PDGM metadata. It reports overlap by WHO grade, the follow-up scans that hide overlap from a scan-level check, and how removing overlap changes cohort composition. It also includes an exploratory, stratified zero-shot segmentation analysis.
@@ -11,6 +13,8 @@ The audit links the 501 scans (495 patients) of UCSF-PDGM v5 to BraTS 2021 using
 | `audit/audit_overlap.py` | Stand-alone audit (pandas + scipy, CPU, seconds). Reproduces Tables I–III of the paper and, with a split file, the strata S1–S3. |
 | `metadata/` | Audit outputs derived from UCSF-PDGM v5 metadata: patient-level BraTS 2021 linkage, overlap by grade, follow-up scans, composition with standardized differences and tests. |
 | `metadata/split_manifest.csv` | The fixed BraTS 2021 split (875 / 188 / 188) used by the models (`patient_level_split_1251.csv`). |
+| `metadata/validation_cases_checkpoint_selection.csv` | The 188 validation cases in split-file order; the first 40 (`checkpoint_selection = True`) selected the kept checkpoint. Patient 0429's validation ID (BraTS2021_00557, position 59) is not among them. |
+| `metadata/ucsf_pdgm_brats2021_linkage_by_patient.csv` | Patient-to-BraTS 2021 crosswalk: 296 linked patients carrying 298 IDs (patients 0429 and 0433 have two each). |
 | `notebooks/ucsf_grade4_overlap_strata.ipynb` | Colab notebook: strata counts, export of UCSF-PDGM grade-4 cases, image-fingerprint check, zero-shot inference with 3D U-Net and Swin UNETR, stratum table and tests (GPU). |
 | `notebooks/review_checks_bootstrap_fingerprint.ipynb` | Colab notebook: patient-bootstrap CIs, fingerprint reconciliation, within-BraTS duplicate search (CPU). |
 | `figures/make_fig_overlap.py` | Regenerates Fig. 2 from the metadata CSV. |
@@ -28,7 +32,8 @@ python figures/make_fig_overlap.py UCSF-PDGM-metadata_v5.csv
 Expected output: 501 scans of 495 patients. 296 patients are linked to BraTS 2021 (260 in the training cohort, 36 in the validation cohort), all of them WHO grade 4. With our split, the grade-4 strata are S1 = 185, S2 = 36, S3 = 100, and 75 patients are excluded.
 
 ### Audit rules
-- **Matching.** Metadata IDs (`UCSF-PDGM-004`) and image folders (`UCSF-PDGM-0004_nifti`) are matched on the integer case number. All scans with the same number belong to one patient, and patient attributes come from the baseline row.
+- **Input.** `UCSF-PDGM-metadata_v5.csv` from TCIA, SHA-256 `afc1c23a0eb0597b56e603741e72f2308b4860281187cd3808e05b7a0116fd78`.
+- **Matching.** Metadata IDs (`UCSF-PDGM-004`) and image folders (`UCSF-PDGM-0004_nifti`) are matched on the integer case number, extracted with the regular expression `PDGM-0*(\d+)`; scans whose ID contains `_FU` are follow-ups. BraTS 2021 IDs are normalized from the five digits (`\d{5}`) to `BraTS2021_nnnnn`. All scans with the same number belong to one patient, and patient attributes come from the baseline row.
 - **Linkage.** A patient is linked if *any* scan has a `BraTS21 ID`. Patients with two IDs keep both.
 - **Strata.**
   - Seen in training → S1.
@@ -43,7 +48,14 @@ Expected output: 501 scans of 495 patients. 296 patients are linked to BraTS 202
 - **Code**: MIT licence (see `LICENSE`).
 
 ## Models
-The baselines (3D U-Net, 16.6 M parameters; MONAI Swin UNETR, feature size 48, 62.2 M parameters) were trained with the settings listed in the notebook's `CFG` and in Sec. III-C of the paper. MONAI 1.6.1 was installed at evaluation time; the training-time version was not recorded. Checkpoints are not included.
+The baselines (3D U-Net, 16.6 M parameters; MONAI Swin UNETR, feature size 48, 62.2 M parameters) were trained with the settings listed in the notebook's `CFG` and in Sec. III-C of the paper. MONAI 1.6.1 was installed at evaluation time; the training-time version and checkpoint hashes were not recorded. Checkpoints are not included.
+
+**Checkpoint selection.** Every 5 epochs, the mean of WT, TC and ET Dice (sliding window, threshold 0.5, no test-time augmentation) over the first 40 validation cases (see `metadata/validation_cases_checkpoint_selection.csv`) decides whether `best.pt` is replaced; early stopping after 15 epochs without improvement. Region thresholds and post-processing are then tuned on all 188 validation cases with 8-fold flip test-time augmentation.
+
+**Known limitation.** The split is identifier-disjoint but not patient-disjoint: UCSF-PDGM patient 0429 is in training as BraTS2021_00639 and in validation as BraTS2021_00557. `results/brats2021_top_similar_pairs.csv` lists the 30 most similar BraTS 2021 case pairs by FLAIR fingerprint (25 above r = 0.80, 11 of them across partitions); their identity is unverified.
 
 ## Citation
-See `CITATION.cff`. After the Zenodo release, cite the DOI it assigns.
+See `CITATION.cff`. Archived on Zenodo: https://doi.org/10.5281/zenodo.23361084.
+
+## Changes
+- **v1.0.1**: added the checkpoint-selection list, metadata checksum, normalization rules and the known-limitation note; fixed a missing comma in the strata notebook's `CFG` cell; removed unused configuration keys.
