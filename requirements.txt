@@ -1,0 +1,5 @@
+pandas>=2.0
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+# notebooks only: torch, monai (1.6.1 at evaluation), nibabel, kagglehub (installed by the notebook on Colab)

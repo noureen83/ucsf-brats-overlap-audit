@@ -1,0 +1,15 @@
+{
+  "title": "UCSF-PDGM / BraTS 2021 patient-overlap audit: code and derived metadata",
+  "upload_type": "software",
+  "description": "Identifier-level audit of UCSF-PDGM v5 against BraTS 2021 (patient-level linkage, follow-up scans, cohort composition) and notebooks for the exploratory stratified segmentation analysis. Companion to the paper 'Hidden Patient Overlap Between Public Glioma MRI Cohorts'.",
+  "creators": [
+    {"name": "Hameed, Noureen", "affiliation": "Virtual University of Pakistan; The University of Faisalabad"},
+    {"name": "Khan, Talha Farooq", "affiliation": "The University of Faisalabad"},
+    {"name": "Hussain, Majid", "affiliation": "The University of Faisalabad"},
+    {"name": "Saeed, Shakeel", "affiliation": "Virtual University of Pakistan; The University of Faisalabad"},
+    {"name": "Rauf, Abdul", "affiliation": "The University of Faisalabad"}
+  ],
+  "license": "MIT",
+  "keywords": ["data leakage", "external validation", "glioma", "BraTS", "UCSF-PDGM", "MRI segmentation"],
+  "access_right": "open"
+}

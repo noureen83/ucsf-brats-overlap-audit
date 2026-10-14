@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code or the derived metadata, please cite it as below."
+title: "UCSF-PDGM / BraTS 2021 patient-overlap audit"
+version: 1.0.0
+date-released: 2026-10-14
+license: MIT
+authors:
+  - family-names: Hameed
+    given-names: Noureen
+    affiliation: "Virtual University of Pakistan; The University of Faisalabad"
+    email: noureen.hameed@gmail.com
+  - family-names: Khan
+    given-names: Talha Farooq
+    affiliation: "The University of Faisalabad"
+  - family-names: Hussain
+    given-names: Majid
+    affiliation: "The University of Faisalabad"
+  - family-names: Saeed
+    given-names: Shakeel
+    affiliation: "Virtual University of Pakistan; The University of Faisalabad"
+  - family-names: Rauf
+    given-names: Abdul
+    affiliation: "The University of Faisalabad"
+keywords: [data leakage, external validation, glioma, BraTS, UCSF-PDGM, MRI segmentation]
